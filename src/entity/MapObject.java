@@ -54,7 +54,7 @@ public abstract class MapObject {
 
     protected double moveSpeed;
     protected double maxSpeed;
-    protected double stopSteed;
+    protected double stopSpeed;
     protected double fallSpeed;
     protected double maxFallSpeed;
     protected double jumpStart;
@@ -109,7 +109,7 @@ public abstract class MapObject {
         if (dy < 0) {
             if (topLeft || topRight) {
                 dy = 0;
-                ytemp = currRow * tileSize ? cheight / 2;
+                ytemp = currRow * tileSize + cheight / 2;
             } else {
                 ytemp += dy;
             }
@@ -129,7 +129,7 @@ public abstract class MapObject {
         if (dx < 0) {
             if (topLeft || bottomLeft) {
                 dx = 0;
-                xtemp = currCol * tileSize ? cwidth / 2;
+                xtemp = currCol * tileSize + cwidth / 2;
             } else {
                 xtemp += dx;
             }
@@ -148,7 +148,7 @@ public abstract class MapObject {
                 }
             }
         }
-
+    }
     public int getx() {
         return (int) x;
     }
@@ -214,4 +214,4 @@ public abstract class MapObject {
                 || y + ymap - height > GamePanel.HEIGHT;
     }
 }
-}
+
