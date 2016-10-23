@@ -4,7 +4,10 @@ package entity;
  * Created by GG Holappa on 23.10.2016.
  */
 
+import javafx.animation.Animation;
 import tileMap.TileMap;
+
+import java.awt.*;
 
 
 public abstract class MapObject {
@@ -46,7 +49,6 @@ public abstract class MapObject {
     protected boolean up;
     protected boolean down;
     protected boolean jumping;
-    protected boolean jumping;
     protected boolean falling;
 
     protected double moveSpeed;
@@ -57,5 +59,20 @@ public abstract class MapObject {
     protected double jumpStart;
     protected double stopJumpSpeed;
 
+
+    public MapObject(TileMap tm) {
+        tileMap = tm;
+        tileSize = tm.getTileSize();
+    }
+
+    public boolean intersects(MapObject o) {
+        Rectangle r1 = getRectangle();
+        Rectangle r2 = o.getRectangle();
+        return r1.intersects(r2);
+    }
+
+    public Rectangle getRectangle() {
+        return new Rectangle((int) x - cwidth, (int) y - cheight, cwidth, cheight);
+    }
 }
 
