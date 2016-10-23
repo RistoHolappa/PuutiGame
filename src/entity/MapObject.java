@@ -4,7 +4,6 @@ package entity;
  * Created by GG Holappa on 23.10.2016.
  */
 
-import javafx.animation.Animation;
 import main.GamePanel;
 import tileMap.Tile;
 import tileMap.TileMap;
@@ -139,6 +138,8 @@ public abstract class MapObject {
             if (topRight || bottomRight) {
                 dx = 0;
                 xtemp = (currCol + 1) * tileSize + cwidth / 2;
+            } else {
+                xtemp += dx;
             }
             if (!falling) {
                 calculateCorners(x, ydest + 1);
