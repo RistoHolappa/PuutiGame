@@ -30,17 +30,13 @@ public class Animation {
     }
 
     public void setDelay(long d) {
-        delay = d; )
-
-
-        public void setFrame ( int i){
-            currentFrame = i;
-        }
+        delay = d;
+    }
 
     public void update() {
         if (delay == -1) return;
 
-        long elapsed = (System.nanoTime() - startTime / 1000000;
+        long elapsed = (System.nanoTime() - startTime) / 1000000;
 
         if (elapsed > delay) {
             currentFrame++;
@@ -50,9 +46,14 @@ public class Animation {
             currentFrame = 0;
             playedOnce = true;
         }
+    }
 
     public int getFrame() {
         return currentFrame;
+    }
+
+    public void setFrame(int i) {
+        currentFrame = i;
     }
 
     public BufferedImage getImage() {
@@ -66,4 +67,3 @@ public class Animation {
 
 }
 
-}

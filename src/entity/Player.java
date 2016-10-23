@@ -15,34 +15,6 @@ public class Player extends MapObject {
 
     // player stuff
 
-    private int health;
-    private int maxHealth;
-    private int fire;
-    private int maxFire;
-    private boolean dead;
-    private boolean flinching;
-    private long flinchTime;
-
-    //fireball
-    private boolean firing;
-    private int fireCost;
-    private int fireBallDamage;
-    //private ArrayList<FireBall> fireBalls;
-
-    //scratch
-    private boolean scratching;
-    private int scratchDamage;
-    private int scratchRange;
-
-    //gliding
-    private boolean gliding;
-
-    //animations
-
-    private ArrayList<BufferedImage[]> sprites;
-    private final int[] numFrames = {
-            2, 8, 1, 2, 4, 2, 5
-    };
     //animation actions
     private static final int IDLE = 0;
     private static final int WALKING = 1;
@@ -51,6 +23,30 @@ public class Player extends MapObject {
     private static final int GLIDING = 4;
     private static final int FIREBALL = 5;
     private static final int SCRATCHING = 6;
+    private final int[] numFrames = {
+            2, 8, 1, 2, 4, 2, 5
+    };
+    private int health;
+    private int maxHealth;
+    //private ArrayList<FireBall> fireBalls;
+    private int fire;
+    private int maxFire;
+    private boolean dead;
+    private boolean flinching;
+
+    //animations
+    private long flinchTime;
+    //fireball
+    private boolean firing;
+    private int fireCost;
+    private int fireBallDamage;
+    //scratch
+    private boolean scratching;
+    private int scratchDamage;
+    private int scratchRange;
+    //gliding
+    private boolean gliding;
+    private ArrayList<BufferedImage[]> sprites;
 
 
     public Player(TileMap tm) {
@@ -84,12 +80,14 @@ public class Player extends MapObject {
         //load Sprites
 
         try {
-            BufferedImage spritesheet = ImageIO.read(
-                    getClass().getResourceAsStream("/Sprites/Player/playersprites.gif");
+            BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/playersprites.gif"));
+
+            sprites = new ArrayList<BufferedImage[]>();
+
 
             for (int i = 0; i < 7; i++) {
                 BufferedImage[] bi = new BufferedImage[numFrames[i]];
-                for (int j = 0; j < numFrames[i]; j++) {
+                for (int j = 0; j < numFrames[j]; j++) {
                     if (j != 6) {
                         bi[j] = spritesheet.getSubimage(
                                 j * width, i * height, width, height);
@@ -104,6 +102,13 @@ public class Player extends MapObject {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        animation = new Animation();
+
+        currentAction = IDLE;
+        animation.setFrames(sprites.get(IDLE));
+        animation.setDelay(400);
+    }
 
 
     public int getHealth() {
@@ -136,10 +141,49 @@ public class Player extends MapObject {
     }
 
     private void getNextPosition() {
+        //movement
 
+        if (left) {
+            dx -= moveSpeed;
+            if (dx < -maxSpeed) {
+                dx = -maxSpeed;
+            }
+        } else if (right) {
+            dx += moveSpeed;
+            if (dx > maxSpeed) {
+                dx = maxSpeed;
+            }
+        } else {
+            if (dx > 0) {
+                dx -= stopSpeed;
+                if (dx < 0) {
+                    dx = 0;
+                }
+            } else if (dx < 0) {
+                dx += stopSpeed;
+                if (dx > 0) {
+                    dx = 0;
+                }
+            }
+        }
+        //cannot attact while moving
 
+        if ((currentAction == SCRATCHING || currentAction == FIREBALL) && !(jumping || falling)) {
+            dx = 0;
+        }
+        if (jumping && !falling) {
+            dy = jumpStart;
+            falling = true;
+        }
+        if (falling) {
+            if (dy > 0 && gliding) dy += fallSpeed * 0.1;
+            else dy *= fallSpeed;
+            if (dy > 0) jumping = false;
+            if (dy < 0 && !jumping) dy += stopJumpSpeed;
+            if (dy > maxFallSpeed) dy = maxFallSpeed;
+        }
     }
-      else
+
 
     public void update() {
         //update position
@@ -157,7 +201,7 @@ public class Player extends MapObject {
                 width = 60;
             }
 
-        } else if (firint) {
+        } else if (firing) {
             if (currentAction != FIREBALL) {
                 currentAction = FIREBALL;
                 animation.setFrames(sprites.get(FIREBALL));
@@ -187,14 +231,13 @@ public class Player extends MapObject {
             if (currentAction != WALKING) {
 
                 currentAction = WALKING;
-                animaton.setFrames(sprites.get(WALKING));
+                animation.setFrames(sprites.get(WALKING));
                 animation.setDelay(40);
                 width = 30;
             }
         }
-    }
 
-    {
+
         if (currentAction != IDLE) {
             currentAction = IDLE;
             animation.setFrames(sprites.get(IDLE));
@@ -209,7 +252,7 @@ public class Player extends MapObject {
         if (left) facingRight = false;
     }
 
-}
+
 
     public void draw(Graphics2D g) {
 
@@ -223,12 +266,12 @@ public class Player extends MapObject {
         }
         if (facingRight) {
             g.drawImage(
-                    animation.getImage(), (int(x + xmap - width / 2), (int) (y + ymap - height / 2), null))
+                    animation.getImage(), (int) (x + xmap - width / 2), (int) (y + ymap - height / 2), null);
 
         } else {
             g.drawImage(
-                    animation.getImage(), x + xmap - width / 2 ? width,
-                    (int) (y ? ymap - height / 2), -width, height, null);
+                    animation.getImage(), (int) (x + xmap - width / 2 + width),
+                    (int) (y + ymap - height / 2), -width, height, null);
         }
     }
 }
